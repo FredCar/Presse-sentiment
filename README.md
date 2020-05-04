@@ -4,8 +4,11 @@ projet réalisé dans le cadre de la formation [Développeur·se Data IA](https:
 
 ## Scraping
 scraper les articles de presse
-- lesquels ????
-- ou ????
+- Source : Google Actu "https://news.google.com/topstories?hl=fr&gl=FR&ceid=FR%3Afr"
+- Problèmes : Non exhaustif et filtré par Google      
+------
+- D'autres sources ????
+- lesquelles ????
 - comment ????
 - payants ????
 - exhaustif ou test ????
@@ -27,6 +30,7 @@ Titre / texte ?? / date / auteur / journal / matrice de termes / positivité / s
 - ?? Génération d’horoscope ??
 
 ## Web app
+- Courbe de positivité générale affichée par heures ou par jours
 - Calcule “***l’humeur***” du jour avec la positivité
 - Nuage de mots d’un jour choisi (couleur en fonction de l’humeur du jour ??)
 - Classement des journaux:
