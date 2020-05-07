@@ -23,6 +23,14 @@ class Enregistrement:
             self.collec.insert_many(data)
 
 
+    def read(self, key={}):
+        """
+        Lecture des données
+        """
+        self.result = self.collec.find(key)
+        return self.result
+
+
     # def update(self, filtre={}, updata={}, method="one"):
     #     """
     #     Modification des données
@@ -31,14 +39,8 @@ class Enregistrement:
     #         self.collec.update_one(filtre, {"$set": updata})
     #     else:
     #         self.collec.update_many(filtre, {"$set": updata})
-    #
-    # def read(self, collec="", key=""):
-    #     """
-    #     Lecture des données
-    #     """
-    #     self.result = self.collec.find({})
-    #     return self.result
-    #
+
+
     # def delete(self, filtre={}, method="one"):
     #     """
     #     Suppression des données

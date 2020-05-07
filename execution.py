@@ -36,6 +36,21 @@ for x in sortie.keys():
 
     sortie[x]["matrice"] = mat
 
+    # Contrôle des doublons avant enregistrement
+    requete = enreg.read({"titre": sortie[x]["titre"],
+                          "auteur": sortie[x]["auteur"]})
+
     # Enregistrement
-    enreg.insert(sortie[x])
+    if len(list(requete)) > 0:
+        print(">>> Existe déjà !")
+        print(sortie[x]["titre"])
+        print("---------------------------------------")
+    else:
+        enreg.insert(sortie[x], method="one")
+        print("============Enregistré=================")
+        pprint.pprint(sortie[x])
+        print("=======================================")
+
+
+#pprint.pprint(sortie)
 
