@@ -57,6 +57,7 @@ class Scrapeur:
             else:
                 texte = "--"
 
+            # TODO Récupérer la catégorie des articles
 
             sortie[compteur] = {"titre": titre,
                                 "auteur": auteur,

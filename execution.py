@@ -1,7 +1,6 @@
 from pack.scrapeur import Scrapeur
 from pack.traitement import Traitement
 from pack.enregistrement import Enregistrement
-import pprint
 import time
 
 debut = time.time()
@@ -25,6 +24,7 @@ for x in sortie.keys():
 
     if len(list(requete)) > 0:
         print(">>> Existe déjà !")
+        print(total, "/", sortie[x]["auteur"])
         print(sortie[x]["titre"])
         print("---------------------------------------")
         continue
@@ -38,6 +38,12 @@ for x in sortie.keys():
         chaine += sortie[x]["extrait"] + " "
         chaine += sortie[x]["texte"]
 
+    # Calcul de la positivité
+    sortie[x]["positivite"] = trait.positivite(chaine)
+
+    # Calcul de l'objectivité
+    sortie[x]["subjectivite"] = trait.subjectivite(chaine)
+
     # Conversion en liste de phrases (format attendu pour la création de la matrice de termes)
     parts = chaine.split(". ")
 
@@ -46,6 +52,7 @@ for x in sortie.keys():
     for part in parts:
 
         # Lemmatisation
+        # TODO améliorer le temps de traitement
         part = trait.lemmatisation(part)
 
         # Nettoyage
@@ -71,11 +78,13 @@ for x in sortie.keys():
     cpt += 1
     enreg.insert(sortie[x], method="one")
     print("============Enregistré=================")
+    print(total, "/", sortie[x]["auteur"])
     print(sortie[x]["titre"])
     print("=======================================")
 
+    # TODO Enregistrement des logs dans un fichier
 
-temps = round(time.time() - debut, 2)
-print("Nb d'enregistrement :", cpt, "/", total, "articles, en :", temps, "secondes")
-#pprint.pprint(sortie)
+temps = time.time() - debut
+temps = time.strftime('%Hh, %Mm %Ss', time.gmtime(temps))
+print("Nb d'enregistrement :", cpt, "/", total, "articles, en :", temps)
 

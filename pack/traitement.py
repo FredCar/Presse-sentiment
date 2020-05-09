@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from stop_words import get_stop_words
 import nltk
 import spacy # Lemmatiseur
+from textblob import TextBlob
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
@@ -71,19 +72,19 @@ class Traitement:
 
 
     # TODO Calcul de la positivité
-    def positivite(self):
+    def positivite(self, phrase):
         """
         Calcule la positivité de l'article
         """
-        pass
+        return TextBlob(phrase).sentiment.polarity
 
 
     # TODO Calcul de l'objectivité
-    def objectivite(self):
+    def subjectivite(self, phrase):
         """
         Calcule l'objectivité de l'article
         """
-        pass
+        return TextBlob(phrase).sentiment.subjectivity
 
 
     def matrice(self, x):
