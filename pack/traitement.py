@@ -21,6 +21,25 @@ class Traitement:
     def __init__(self):
         self.french_stop_words = get_stop_words('french')
 
+        # TODO Acev SpaCy, quelle différence entre "md" et "sm" ??
+        self.nlp = spacy.load('fr_core_news_md') # Utilisé par SapCy pour la Lemmatisation et Stemmatisation
+
+
+    def concatenation(self, sortie):
+        """
+        Concaténation du texte à traiter pour la matrice de termes
+        """
+        chaine = ""
+        chaine += sortie["titre"] + " "
+        if sortie["extrait"][:20] == sortie["texte"][:20]:
+            chaine += sortie["texte"]
+        else:
+            chaine += sortie["extrait"] + " "
+            chaine += sortie["texte"]
+
+        return chaine
+
+
     def nettoyage(self, x):
         """
         Fonction de nettoyage du texte
@@ -59,9 +78,9 @@ class Traitement:
         """
         Renvoi la racine des mots
         """
-        nlp = spacy.load('fr_core_news_md')
+        # nlp = spacy.load('fr_core_news_md')
 
-        doc = nlp(phrase)
+        doc = self.nlp(phrase)
         sortie = []
         for token in doc:
             sortie.append(token.lemma_)
@@ -71,7 +90,6 @@ class Traitement:
         return sortie
 
 
-    # TODO Calcul de la positivité
     def positivite(self, phrase):
         """
         Calcule la positivité de l'article
@@ -79,7 +97,6 @@ class Traitement:
         return TextBlob(phrase).sentiment.polarity
 
 
-    # TODO Calcul de l'objectivité
     def subjectivite(self, phrase):
         """
         Calcule l'objectivité de l'article
@@ -107,4 +124,3 @@ class Traitement:
 # Test
 if __name__ == "__main__":
     trait = Traitement()
-    trait.spac()

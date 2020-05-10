@@ -11,6 +11,7 @@ trait = Traitement()
 enreg = Enregistrement()
 
 # Scraping
+liste_editeur = scrap.editeurs
 sortie = scrap.scrap()
 
 # Traitement par articles
@@ -18,6 +19,15 @@ cpt = 0
 total = 0
 for x in sortie.keys():
     total += 1
+
+    # Contrôle de l'éditeur pour ne garder que les données complètes
+    # if sortie[x]["auteur"].lower() in liste_editeur:
+    #     pass
+    # else:
+    #     print(">>>", sortie[x]["auteur"], "<<<")
+    #     print("Pas dans la liste des éditeurs")
+    #     continue
+
     # Contrôle des doublons avant traitement
     requete = enreg.read({"titre": sortie[x]["titre"],
                           "auteur": sortie[x]["auteur"]})
@@ -30,13 +40,7 @@ for x in sortie.keys():
         continue
 
     # Concaténation du texte à traiter pour la matrice de termes
-    chaine = ""
-    chaine += sortie[x]["titre"] + " "
-    if sortie[x]["extrait"][:20] == sortie[x]["texte"][:20]:
-        chaine += sortie[x]["texte"]
-    else:
-        chaine += sortie[x]["extrait"] + " "
-        chaine += sortie[x]["texte"]
+    chaine = trait.concatenation(sortie[x])
 
     # Calcul de la positivité
     sortie[x]["positivite"] = trait.positivite(chaine)
@@ -51,8 +55,7 @@ for x in sortie.keys():
     liste_parts = []
     for part in parts:
 
-        # Lemmatisation
-        # TODO améliorer le temps de traitement
+        # Lemmatisation et Stemmatisation
         part = trait.lemmatisation(part)
 
         # Nettoyage
