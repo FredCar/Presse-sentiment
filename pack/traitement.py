@@ -78,13 +78,10 @@ class Traitement:
         """
         Renvoi la racine des mots
         """
-        # nlp = spacy.load('fr_core_news_md')
-
         doc = self.nlp(phrase)
         sortie = []
         for token in doc:
             sortie.append(token.lemma_)
-            # print(token, token.lemma_)
         sortie = " ".join(sortie)
 
         return sortie
