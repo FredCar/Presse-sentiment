@@ -1,8 +1,15 @@
+# -*- coding: utf-8 -*-
+#!/home/fred/anaconda3/envs/Lana/bin/python3.7
+
+# Pour pouvoir importer mes propres packages, même depuis un dossier parent
+import sys
+sys.path.insert(0, "/home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final")
 from pack.scrapeur import Scrapeur
-from pack.traitement import Traitement
+from pack.traitement import Traitement, concatenation, nettoyage
 from pack.enregistrement import Enregistrement
 
 import time
+import datetime
 
 debut = time.time()
 
@@ -13,10 +20,11 @@ enreg = Enregistrement()
 
 tour = 0
 cpt = 1
+log = ""
 while cpt > 0:
     tour += 1
+
     # Scraping
-    # liste_editeur = scrap.editeurs
     sortie = scrap.scrap()
 
     # Traitement par articles
@@ -25,27 +33,15 @@ while cpt > 0:
     for x in sortie.keys():
         total += 1
 
-        # Contrôle de l'éditeur pour ne garder que les données complètes
-        # if sortie[x]["auteur"].lower() in liste_editeur:
-        #     pass
-        # else:
-        #     print(">>>", sortie[x]["auteur"], "<<<")
-        #     print("Pas dans la liste des éditeurs")
-        #     continue
-
         # Contrôle des doublons avant traitement
         requete = enreg.read({"titre": sortie[x]["titre"],
                               "auteur": sortie[x]["auteur"]})
 
         if len(list(requete)) > 0:
-            # print(">>> Existe déjà !")
-            # print(total, "/", sortie[x]["auteur"])
-            # print(sortie[x]["titre"])
-            # print("---------------------------------------")
             continue
 
         # Concaténation du texte à traiter pour la matrice de termes
-        chaine = trait.concatenation(sortie[x])
+        chaine = concatenation(sortie[x])
 
         # Calcul de la positivité
         sortie[x]["positivite"] = trait.positivite(chaine)
@@ -64,13 +60,7 @@ while cpt > 0:
             part = trait.lemmatisation(part)
 
             # Nettoyage
-            part = trait.nettoyage(part)
-
-            # TODO Stematisaton utile ou pas ?
-            # print(trait.stematisation(part))
-            # print("----------------------------------------------------")
-            # print(part)
-            # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            part = nettoyage(part)
 
             liste_parts.append(part)
 
@@ -82,17 +72,28 @@ while cpt > 0:
         sortie[x]["matrice"] = mat
 
 
+        # Date d'enregistrement
+        now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
+        now = now.strftime('%Y-%m-%d-%H-%M-%S')
+
+        sortie[x]["enregistre"] = now
+
+
         # Enregistrement
         cpt += 1
         enreg.insert(sortie[x], method="one")
-        # print("============Enregistré=================")
-        # print(total, "/", sortie[x]["auteur"])
-        # print(sortie[x]["titre"])
-        # print("=======================================")
 
-        # TODO Enregistrement des logs dans un fichier
 
     temps = time.time() - debut
+    debut = time.time()
     temps = time.strftime('%Hh, %Mm %Ss', time.gmtime(temps))
-    print("Tour n°", tour, "- Nb d'enregistrement :", cpt, "/", total, "articles, en :", temps)
+    log += "Tour n° {} - Nb d'enregistrement : {}/{} articles, en : {} \n".format(tour, cpt, total, temps)
+    #print(f"Tour n° {tour} - Nb d'enregistrement : {cpt}/{total} articles, en : {temps}")
 
+# Enregistrement des logs dans un fichier
+now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
+now = now.strftime('%Y-%m-%d %H:%M:%S')
+now = str(now) + " ================================================= \n"
+log = str(now) + log
+with open("scrap.log", "a") as logs:
+    logs.write(log)

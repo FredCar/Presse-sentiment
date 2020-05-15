@@ -4,7 +4,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from stop_words import get_stop_words
 import nltk
 import spacy # Lemmatiseur
-from textblob import TextBlob
+from textblob import Blobber, TextBlob
+from textblob_fr import PatternTagger, PatternAnalyzer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
@@ -13,6 +14,41 @@ import matplotlib.pyplot as plt
 # nltk.download("wordnet") # A charger la prmière fois
 
 
+#==============================================
+# \\\\\\\\\\\\\\ ---Fonctions--- //////////////
+#==============================================
+def concatenation(sortie):
+    """
+    Concaténation du texte à traiter pour la matrice de termes
+    """
+    chaine = ""
+    chaine += sortie["titre"] + " "
+    if sortie["extrait"][:20] == sortie["texte"][:20]:
+        chaine += sortie["texte"]
+    else:
+        chaine += sortie["extrait"] + " "
+        chaine += sortie["texte"]
+
+    return chaine
+
+
+def nettoyage(x):
+    """
+    Fonction de nettoyage du texte
+    """
+    x = x.lower()
+    x = re.sub(r"\W", " ", x)  # Enleve la ponctuation
+    x = re.sub(r"[éèêë]", "e", x)
+    x = re.sub(r"[àâäà]", "a", x)
+    x = re.sub(r"[ùûü]", "u", x)
+    x = re.sub(r"[ôöò]", "o", x)
+    x = re.sub(r"  +", " ", x)  # Enleve les espaces multiples
+    return x
+
+
+#==============================================#
+# \\\\\\\\\\\\\\\\ ---Classe--- ////////////////
+#==============================================#
 class Traitement:
     """
     Classe chargée d'effectuer les divers traitements nécessaires
@@ -24,34 +60,7 @@ class Traitement:
         # TODO Acev SpaCy, quelle différence entre "md" et "sm" ??
         self.nlp = spacy.load('fr_core_news_md') # Utilisé par SapCy pour la Lemmatisation et Stemmatisation
 
-
-    def concatenation(self, sortie):
-        """
-        Concaténation du texte à traiter pour la matrice de termes
-        """
-        chaine = ""
-        chaine += sortie["titre"] + " "
-        if sortie["extrait"][:20] == sortie["texte"][:20]:
-            chaine += sortie["texte"]
-        else:
-            chaine += sortie["extrait"] + " "
-            chaine += sortie["texte"]
-
-        return chaine
-
-
-    def nettoyage(self, x):
-        """
-        Fonction de nettoyage du texte
-        """
-        x = x.lower()
-        x = re.sub(r"\W", " ", x)  # Enleve la ponctuation
-        x = re.sub(r"[éèêë]", "e", x)
-        x = re.sub(r"[àâäà]", "a", x)
-        x = re.sub(r"[ùûü]", "u", x)
-        x = re.sub(r"[ôöò]", "o", x)
-        x = re.sub(r"  +", " ", x) # Enleve les espaces multiples
-        return x
+        self.blob = Blobber(pos_tagger=PatternTagger(), analyzer=PatternAnalyzer()) # Analyse de sentiments
 
 
     def tokenisation(self, phrase):
@@ -91,14 +100,16 @@ class Traitement:
         """
         Calcule la positivité de l'article
         """
-        return TextBlob(phrase).sentiment.polarity
+        bloby = self.blob(phrase)
+        return bloby.sentiment[0]
 
 
     def subjectivite(self, phrase):
         """
         Calcule l'objectivité de l'article
         """
-        return TextBlob(phrase).sentiment.subjectivity
+        bloby = self.blob(phrase)
+        return bloby.sentiment[1]
 
 
     def matrice(self, x):

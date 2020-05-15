@@ -7,8 +7,8 @@
         {% for x in data %}
             <ul>
                 <li>
-                    <p><a href="{{ data[x]['lien'] }}" target="_blank">{{ data[x]["titre"] }}</a></p>
-                    <p>Note : {{ data[x]["positivite"] }} --- Auteur : {{ data[x]["auteur"] }}</p>
+                    <h3><a href="{{ data[x]['lien'] }}" target="_blank">{{ data[x]["titre"] }}</a></h3>
+                    <p><strong>Note : {{ data[x]["positivite"] }} --- Auteur : {{ data[x]["auteur"] }}</strong></p>
                     <p>{{ data[x]["date"] }} - {{ data[x]["heure"] }}</p>
                     <p>{{ data[x]["extrait"] }}</p>
                     <p>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </p>

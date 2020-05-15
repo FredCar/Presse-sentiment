@@ -9,8 +9,8 @@ class Enregistrement:
     def __init__(self):
         # Connection à la base
         self.client = MongoClient("localhost", 27017)
-        self.dbase = self.client["test_presse"]
-        self.collec = self.dbase["test"]
+        self.dbase = self.client["presse-sentiment"]
+        self.collec = self.dbase["corpus"]
 
 
     def insert(self, data={}, method="one"):
