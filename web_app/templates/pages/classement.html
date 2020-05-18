@@ -4,11 +4,43 @@
 
         <h1>Classement</h1>
 
+        <form action="{{ url_for('classement_actif') }}" method="POST">
+            <div class="test row">
+                <div class="col-3">
+                    <label for="periode">Sélectionnez la période</label><br>
+<!--                    TODO Paramétrer le tri avec l'input date-->
+<!--                    <input type="date" id="periode" name="periode">-->
+                    <select class="form-control" id="periode" name="periode">
+                        {% for periode in choix_periode %}
+                            <option value="{{ periode[1] }}" {% if periode[1] == data['periode'] %} selected {% endif %}>{{ periode[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label for="asc">Sélectionnez l'ordre</label>
+                    <select class="form-control" id="asc" name="asc">
+                        {% for pos in choix_ordre_pos %}
+                            <option value="{{ pos[1] }}" {% if pos[1] == data['ascendant'] %} selected {% endif %}>{{ pos[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+<!--                TODO Classement par subjectivité ??-->
+                <div class="col-2">
+
+                    <button type="submit" class="btn btn-dark">Valider</button>
+                </div>
+            </div>
+        </form>
+
+
+        <br><br>
+
+
         {% for x in data %}
             <ul>
                 <li>
                     <h3><a href="{{ data[x]['lien'] }}" target="_blank">{{ data[x]["titre"] }}</a></h3>
-                    <p><strong>Note : {{ data[x]["positivite"] }} --- Auteur : {{ data[x]["auteur"] }}</strong></p>
+                    <p><strong>Note : <span class="badge {{ data[x]['couleur'] }}">{{ data[x]["positivite"] }}</span> --- Auteur : {{ data[x]["auteur"] }}</strong></p>
                     <p>{{ data[x]["date"] }} - {{ data[x]["heure"] }}</p>
                     <p>{{ data[x]["extrait"] }}</p>
                     <p>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </p>
