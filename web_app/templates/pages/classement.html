@@ -40,12 +40,15 @@
             <ul>
                 <li>
                     <h3><a href="{{ data[x]['lien'] }}" target="_blank">{{ data[x]["titre"] }}</a></h3>
-                    <p><strong>Note : <span class="badge {{ data[x]['couleur'] }}">{{ data[x]["positivite"] }}</span> --- Auteur : {{ data[x]["auteur"] }}</strong></p>
-                    <p>{{ data[x]["date"] }} - {{ data[x]["heure"] }}</p>
+                    <p><strong>Note : <span class="badge {{ data[x]['couleur'] }}">{{ data[x]["positivite"] }} %</span> --- <a href="{{ url_for('classement_similaire') }}?id={{ data[x]['_id'] }}" class="badge">Voir des articles similaires</a></strong></p>
+                    <p>Publié par <strong>{{ data[x]["auteur"] }}</strong>, le {{ data[x]["date"] }} à {{ data[x]["heure"] }}</p>
                     <p>{{ data[x]["extrait"] }}</p>
                     <p>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </p>
                 </li>
             </ul>
         {% endfor %}
+
+
+<!--TODO Système de pagination-->
 
     {% endblock %}
