@@ -1,0 +1,10 @@
+{% extends "layouts/default.html" %}
+
+    {% block body %}
+
+        <h1>Statistiques</h1>
+
+        <p>Nombre d'articles dans la base de données : <strong>{{ data["total"] }}</strong></p>
+        <p>Nombre de journaux : <strong>{{ data["journaux"] }}</strong></p>
+
+    {% endblock %}

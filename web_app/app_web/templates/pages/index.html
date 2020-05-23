@@ -1,0 +1,17 @@
+{% extends "layouts/default.html" %}
+
+    {% block body %}
+
+        <h1>Hello World !!</h1>
+        <p>Nous somme le : {{ data.date }}, il est actuellement : {{ data.heure }}</p>
+
+        <div class="row">
+            <div class="col">
+                <img src="../static/images/graph-jour" alt="graph-jour" height=350px>
+            </div>
+            <div class="col">
+                <img src="../static/images/graph-24-heure" alt="graph-heure" height=350px>
+            </div>
+        </div>
+
+    {% endblock %}

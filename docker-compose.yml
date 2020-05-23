@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  app_flask:
+    image: python
+    networks:
+      - presse_network
+    ports:
+      - 5010:5000
+    volumes:
+      - /web_app/:/src/
+    command: pip install requirements.txt
+
+  base_mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: presse-sentiment
+    networks:
+      - presse_network
+    volumes:
+      - /database:/data/db
+      - /base_de_donnees_presse.json:/data/import/
+#      - db_presse-sentiment
+#    command: mongoimport -d "presse-sentiment" -c "corpus" --file "base_de_donnees_presse.json"
+
+  scrapeur_python:
+    build: scraping/.
+    networks:
+      - presse_network
+
+volumes:
+  db_presse-sentiment:
+
+networks:
+  presse_network:
