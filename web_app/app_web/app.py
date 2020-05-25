@@ -3,8 +3,8 @@ import datetime
 
 # Pour pouvoir importer mes propres packages, même depuis un dossier parent
 import sys
-sys.path.insert(0, "/home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app") #Sans Docker
-# sys.path.insert(0, "/src") # Avec Docker
+# sys.path.insert(0, "/home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app") #Sans Docker
+sys.path.insert(0, "/src") # Avec Docker
 from pack.fonctions import *
 
 
@@ -136,4 +136,5 @@ def a_propos():
 
 ##########################
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True) # Sans Docker
+    app.run(host="0.0.0.0", port=5000, debug=True) # Avec Docker

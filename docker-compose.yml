@@ -1,16 +1,6 @@
 version: "3"
 
 services:
-  app_flask:
-    image: python
-    networks:
-      - presse_network
-    ports:
-      - 5010:5000
-    volumes:
-      - /web_app/:/src/
-    command: pip install requirements.txt
-
   base_mongo:
     image: mongo
     environment:
@@ -20,18 +10,28 @@ services:
     networks:
       - presse_network
     volumes:
-      - /database:/data/db
-      - /base_de_donnees_presse.json:/data/import/
-#      - db_presse-sentiment
-#    command: mongoimport -d "presse-sentiment" -c "corpus" --file "base_de_donnees_presse.json"
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/database:/data
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/database/import.sh:/docker-entrypoint-initdb.d/import.sh
+#    entrypoint: bash /data/import.sh
+
+  app_flask:
+    build: web_app/.
+    volumes:
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/app_web:/src/app_web
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/pack/:/src/pack/
+    networks:
+      - presse_network
+    ports:
+      - 5010:5000
 
   scrapeur_python:
     build: scraping/.
+    volumes:
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/scrap.log:/src/scrap.log
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/scrapeur.py:/src/scrapeur.py
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/pack/:/src/pack/
     networks:
       - presse_network
-
-volumes:
-  db_presse-sentiment:
 
 networks:
   presse_network:

@@ -303,13 +303,3 @@ class Scrapeur:
 
         return texte[:-1]
 
-
-# Test
-if __name__ == "__main__":
-    scrap = Scrapeur()
-    sortie = scrap.scrap()
-
-    import pprint
-    pprint.pprint(sortie)
-
-

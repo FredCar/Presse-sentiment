@@ -16,8 +16,9 @@ import numpy as np
 #==============================================
 def connection():
     """ Connexion à la base de données  """
-    client = MongoClient("localhost", 27017) # Sans Docker
-    # client = MongoClient('base_mongo', username="root", password="example") # Avec Docker
+    # client = MongoClient("localhost", 27017) # Sans Docker
+    client = MongoClient('base_mongo', username="root", password="example") # Avec Docker
+    # client = MongoClient("base_mongo") # Test
     dbase = client["presse-sentiment"]
     collec = dbase["corpus"]
 
@@ -119,14 +120,15 @@ def ploteur(x,y, titre="", filename="graph"):
     Crée et enregistre les graphs
     """
     plt.figure(figsize=(18, 8))
-    plt.plot(x, y, label="Coubre de positivite")
+    plt.plot(x, y, label="Courbe de positivite")
     plt.axhline(y=0, linestyle="--", c="red", label="Neutre")
     plt.title(titre, fontsize=28)
     plt.xticks(rotation=70, fontsize=15)
     plt.yticks(fontsize=15)
     plt.legend(fontsize=15)
 
-    chemin = "static/images/" + filename
+    # TODO Test avec un chemin absolu
+    chemin = "/src/static/images/" + filename
     plt.savefig(chemin, format="png")
 
 
@@ -164,6 +166,7 @@ def trieur(periode=30, ascendant=False):
     Renvois les données du DataFrame en dico
     """
     df = limiteur(periode)
+
     df.sort_values(by=["positivite"], axis=0, inplace=True, ascending=ascendant)
     data = df.T.to_dict()
     data = couleur_positivite(data)
@@ -209,7 +212,8 @@ def cloudeur(periode=1, positif=True, filename="cloud"):
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
 
-    chemin = "static/images/" + filename
+    # TODO Test avec un chemin absolu
+    chemin = "src/static/images/" + filename
     plt.savefig(chemin, format="png")
 
 

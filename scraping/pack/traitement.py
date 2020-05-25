@@ -4,10 +4,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from stop_words import get_stop_words
 import nltk
 import spacy # Lemmatiseur
-from textblob import Blobber, TextBlob
+from textblob import Blobber
 from textblob_fr import PatternTagger, PatternAnalyzer
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
 
 
 # nltk.download("punkt") # A charger la prmière fois
@@ -114,9 +112,8 @@ class Traitement:
 
     def matrice(self, x):
         """
-        Renvoi la liste des termes et leur nombre d'occurences trié par ordre descendant
+        Renvoi la liste des termes et leur nombre d'occurences trié par ordre decroissant
         """
-        # TODO question à se poser : Matrice TFIDF ou pas ?
         cv = CountVectorizer(stop_words=self.french_stop_words)
         x_cv = cv.fit_transform(x)
 
@@ -126,9 +123,3 @@ class Traitement:
         x_cv = x_cv.sort_values(ascending=False)
 
         return x_cv
-
-
-
-# Test
-if __name__ == "__main__":
-    trait = Traitement()

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-#!/home/fred/anaconda3/envs/Lana/bin/python3.7
 
 # Pour pouvoir importer mes propres packages, même depuis un dossier parent
 import sys
-sys.path.insert(0, "/home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scrapeur/") # Sans Docker
-# sys.path.insert(0, "/src") # Avec Docker
+sys.path.insert(0, "/src") # Avec Docker
+
 from pack.scraping import Scrapeur
 from pack.traitement import Traitement, concatenation, nettoyage
 from pack.enregistrement import Enregistrement
@@ -90,7 +89,7 @@ while cpt > 0:
     debut = time.time()
     temps = time.strftime('%Hh, %Mm %Ss', time.gmtime(temps))
     log += "Tour n° {} - Nb d'enregistrement : {}/{} articles, en : {} \n".format(tour, cpt, total, temps)
-    # print(f"Tour n° {tour} - Nb d'enregistrement : {cpt}/{total} articles, en : {temps}")
+
 
 # Enregistrement des logs dans un fichier
 now = datetime.datetime.fromtimestamp(time.time())  # date actuelle

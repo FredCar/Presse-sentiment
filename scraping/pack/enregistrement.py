@@ -8,8 +8,8 @@ class Enregistrement:
 
     def __init__(self):
         # Connection à la base
-        self.client = MongoClient("localhost", 27017) # Sans Docker
-        # self.client = MongoClient('base_mongo', username="root", password="example") # Avec Docker
+        # self.client = MongoClient("localhost", 27017) # Sans Docker
+        self.client = MongoClient('base_mongo', username="root", password="example") # Avec Docker
         self.dbase = self.client["presse-sentiment"]
         self.collec = self.dbase["corpus"]
 
