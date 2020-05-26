@@ -1,5 +1,9 @@
-import requests
+import sys
+sys.path.insert(0, "/usr/local/lib/python3.7/site-packages")
+
 from bs4 import BeautifulSoup as bs
+import requests
+
 
 class Scrapeur:
     """

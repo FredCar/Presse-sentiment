@@ -63,17 +63,27 @@ def hh(x):
 def limiteur(periode=30):
     """Pour filtrer par période"""
     df = read()
+
     df = df[df["date"] != "--"]
     df = df[df["heure"] != "--"]
 
     sec_par_jour = 60 * 60 * 24
     limit = time.time() - (sec_par_jour * periode)
     limit = datetime.datetime.fromtimestamp(limit)
+
+    # TODO Le probleme vient de la limite de temps imposée et du fait que le scrap ne fonctionne pas:
+    #  les articles sont trop anciens;
+    #  Solution provisoire: refaire un export plus récent;
+    #  solution définitive: automatiser le scraping
     limit = limit.strftime('%Y-%m-%d-%H')
+    # End TODO
 
     df["date-heure"] = df.apply(date_heure, axis=1)
     df["date-heure"] = pd.to_datetime(df["date-heure"])
+
+    # TODO Le problème ce concrétise ici: le DF retourné est vide
     df = df[df["date-heure"] > limit]
+    # End TODO
 
     return df
 
@@ -219,6 +229,7 @@ def cloudeur(periode=1, positif=True, filename="cloud"):
 
 def statistiques():
     df = read()
+
     data = {}
     data["total"] = df.shape[0]
     data["journaux"] = len(df["auteur"].unique())

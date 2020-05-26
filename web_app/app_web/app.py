@@ -38,8 +38,6 @@ def home():
     return render_template("pages/index.html", data=data)
 
 
-
-
 @app.route("/graph/")
 def graph():
 

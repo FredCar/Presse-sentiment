@@ -90,11 +90,11 @@ while cpt > 0:
     temps = time.strftime('%Hh, %Mm %Ss', time.gmtime(temps))
     log += "Tour n° {} - Nb d'enregistrement : {}/{} articles, en : {} \n".format(tour, cpt, total, temps)
 
-
+# TODO Modifier l'enregistrement des logs pour ne pas tout écrire à la fin de l'exécution
 # Enregistrement des logs dans un fichier
 now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
 now = now.strftime('%Y-%m-%d %H:%M:%S')
 now = str(now) + " ================================================= \n"
 log = str(now) + log
-with open("scrap.log", "a") as logs:
+with open("/src/scrap.log", "a") as logs: # TODO Voir si un chemin absolu est nécessaire
     logs.write(log)

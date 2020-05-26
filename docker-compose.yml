@@ -11,8 +11,9 @@ services:
       - presse_network
     volumes:
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/database:/data
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/database/db:/data/db
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/database/configdb:/data/configdb
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/database/import.sh:/docker-entrypoint-initdb.d/import.sh
-#    entrypoint: bash /data/import.sh
 
   app_flask:
     build: web_app/.
