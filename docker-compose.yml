@@ -10,6 +10,7 @@ services:
     networks:
       - presse_network
     volumes:
+      - /etc/localtime:/etc/localtime # Pour un affichage correct du temps
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/database:/data
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/database/db:/data/db
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/database/configdb:/data/configdb
@@ -18,16 +19,19 @@ services:
   app_flask:
     build: web_app/.
     volumes:
+      - /etc/localtime:/etc/localtime # Pour un affichage correct du temps
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/app_web:/src/app_web
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/app_web/static/images/:/src/app_web/static/images/ # TODO A supprimer
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/pack/:/src/pack/
     networks:
       - presse_network
     ports:
-      - 5010:5000
+      - 5010:5000 
 
   scrapeur_python:
     build: scraping/.
     volumes:
+      - /etc/localtime:/etc/localtime # Pour un affichage correct du temps
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/scrap.log:/src/scrap.log
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/scrapeur.py:/src/scrapeur.py
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/pack/:/src/pack/

@@ -9,6 +9,8 @@ from wordcloud import WordCloud
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+import glob
+import os
 
 
 #==============================================
@@ -88,10 +90,13 @@ def limiteur(periode=30):
     return df
 
 
+def suppression():
+    """Pour vider le dossier d'images"""
+    for f in glob.glob("/src/static/images/*"):
+        os.remove(f)
 
 
-
-def graph_pos_jour():
+def graph_pos_jour(code=0):
     """
     Enregistre un graph de la positivite par jours
     """
@@ -103,12 +108,12 @@ def graph_pos_jour():
     table = df.pivot_table(index=["date"], values="positivite")
 
     titre = "Positivité moyenne des articles de presse par jours"
-    filename = "graph-jour"
+    filename = "graph-jour" + str(code)
     ploteur(table.index, table.positivite, titre, filename)
 
 
 
-def graph_pos_24_heure():
+def graph_pos_24_heure(code=0):
     """
     Enregistre ung raph de la positivite pour les dernières 24 heures
     """
@@ -121,7 +126,7 @@ def graph_pos_24_heure():
     table["hh"] = hh(a)
 
     titre = "Positivité moyenne des articles de presse des dernières 24 heures"
-    filename = "graph-24-heure"
+    filename = "graph-24-heure" + str(code)
     ploteur(table.hh, table.positivite, titre, filename)
 
 
@@ -137,7 +142,6 @@ def ploteur(x,y, titre="", filename="graph"):
     plt.yticks(fontsize=15)
     plt.legend(fontsize=15)
 
-    # TODO Test avec un chemin absolu
     chemin = "/src/static/images/" + filename
     plt.savefig(chemin, format="png")
 
@@ -203,7 +207,7 @@ def stop_wordeur():
     return french_stop_words
 
 
-def cloudeur(periode=1, positif=True, filename="cloud"):
+def cloudeur(periode=1, positif=True, filename="cloud", code=0):
     french_stop_words = stop_wordeur()
 
     df = limiteur(periode)
@@ -222,9 +226,23 @@ def cloudeur(periode=1, positif=True, filename="cloud"):
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
 
-    # TODO Test avec un chemin absolu
-    chemin = "src/static/images/" + filename
+    chemin = "src/static/images/" + filename + str(code)
     plt.savefig(chemin, format="png")
+
+
+def top(df, limit=20):
+    a = df.pivot_table(values="titre", index="auteur", aggfunc="count")
+    b = df.pivot_table(values=["positivite"], index="auteur", aggfunc="mean")
+    table_auteur = pd.concat([a, b], axis=1)
+    table_auteur = table_auteur.sort_values(by="titre", ascending=False)
+    table_auteur = table_auteur.head(limit)
+    table_auteur = table_auteur.reset_index()
+
+    table_auteur["positivite"] = round(table_auteur["positivite"] * 100, 2)
+
+    top = table_auteur.T.to_dict()
+
+    return top
 
 
 def statistiques():
@@ -233,8 +251,10 @@ def statistiques():
     data = {}
     data["total"] = df.shape[0]
     data["journaux"] = len(df["auteur"].unique())
+    data["top20"] = top(df, 20)
 
     return data
+
 
 # Similarité
 def similaires(text, corpus):
@@ -256,23 +276,14 @@ def similaires(text, corpus):
         dico_id[id] = vals[0][id]
 
     dico_id = sorted(dico_id.items(), key=lambda x: x[1], reverse=True)  # Liste de tuples triée par similarité : + -> -
-    # # Affichage pour contrôle
-    # for id, score in dico_id:
-    #     print(id, ":", score, "=", phrases[id])
-    #     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-
+    
     ids = []  # Liste des meilleurs ids triés
     for x in dico_id:
         ids.append(x[0])
 
-    # if len(ids) >= 3:  # Limite du nb de réponses
-    #     ids = ids[:3]
-
     reponses = []
     if ids:
         reponses = ids
-        # for id in ids:
-        #     reponses.append(corpus[id])
     else:
         reponses.append("Désolé, je ne trouve pas d'articles similaires.")
 

@@ -4,7 +4,29 @@
 
         <h1>Statistiques</h1>
 
+        <h2>Général</h2>
         <p>Nombre d'articles dans la base de données : <strong>{{ data["total"] }}</strong></p>
         <p>Nombre de journaux : <strong>{{ data["journaux"] }}</strong></p>
+
+
+        <h2>Par journaux</h2>
+        <table class="table table-sm table-striped table-hover table-dark">
+            <tr>
+                <th class="text-success" scope="col">#</th>
+                <th class="text-success" scope="col">Journal</th>
+                <th class="text-success" scope="col">Nombre d'articles</th>
+                <th class="text-success" scope="col">Positivité moyenne</th>
+            </tr>
+        {% for x in data.top20 %}
+            <tr>
+                <th class="text-success" scope="row">{{ x+1 }}</th>
+                <th>{{ data.top20[x]["auteur"] }}</th>
+                <th>{{ data.top20[x]["titre"] }}</th>
+                <th>{{ data.top20[x]["positivite"] }} %</th>
+            </tr>
+        {% endfor %}
+        </table>
+
+        <h2>Par jours</h2>
 
     {% endblock %}

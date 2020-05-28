@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import datetime
+import random
 
 # Pour pouvoir importer mes propres packages, même depuis un dossier parent
 import sys
@@ -40,11 +41,16 @@ def home():
 
 @app.route("/graph/")
 def graph():
+    suppression() # Pour vider le dossier d'images
 
-    graph_pos_jour()
-    graph_pos_24_heure()
+    code = {}
+    code["jour"] = random.randint(0, 100000)
+    code["heure"] = random.randint(0, 100000)
 
-    return render_template("pages/graph.html")
+    graph_pos_jour(code["jour"])
+    graph_pos_24_heure(code["heure"])
+
+    return render_template("pages/graph.html", code=code)
 
 
 
@@ -102,20 +108,34 @@ def classement_similaire():
 
 @app.route("/nuage")
 def nuage():
+    suppression() # Pour vider le dossier d'images
+
+    code = {}
+    code["cloud"] = random.randint(0, 100000)
+
     data = {}
-    data["periode"] = ""
-    return render_template("pages/nuage.html", data=data, choix_periode=choix_periode)
+    periode = 1
+    data["periode"] = periode
+
+    cloudeur(periode, code=code["cloud"])
+
+    return render_template("pages/nuage.html", data=data, choix_periode=choix_periode, code=code)
 
 
 @app.route("/nuage", methods=["POST"])
 def nuage_actif():
+    suppression() # Pour vider le dossier d'images
+
+    code = {}
+    code["cloud"] = random.randint(0, 100000)
+
     data = {}
     periode = int(request.form["periode"])
     data["periode"] = periode
 
-    cloudeur(periode)
+    cloudeur(periode, code=code["cloud"])
 
-    return render_template("pages/nuage.html", data=data, choix_periode=choix_periode)
+    return render_template("pages/nuage.html", data=data, choix_periode=choix_periode, code=code)
 
 
 
