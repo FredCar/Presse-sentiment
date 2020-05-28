@@ -2,9 +2,8 @@ from flask import Flask, render_template, request
 import datetime
 import random
 
-# Pour pouvoir importer mes propres packages, même depuis un dossier parent
+# Pour pouvoir importer ses propres packages, même depuis un dossier parent
 import sys
-# sys.path.insert(0, "/home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app") #Sans Docker
 sys.path.insert(0, "/src") # Avec Docker
 from pack.fonctions import *
 
@@ -43,6 +42,7 @@ def home():
 def graph():
     suppression() # Pour vider le dossier d'images
 
+    # Création d'un code aléatoire à concaténer au nom des images pour duper le cache des navigateurs
     code = {}
     code["jour"] = random.randint(0, 100000)
     code["heure"] = random.randint(0, 100000)
@@ -53,34 +53,25 @@ def graph():
     return render_template("pages/graph.html", code=code)
 
 
-
-
-
-###########################################""
-
-
 @app.route("/classement")
 def classement():
     data = trieur(periode=1)
 
-
-    nb_pages = int(len(data)/100)
-
     return render_template("pages/classement.html", data=data, choix_periode=choix_periode,
-                           choix_ordre_pos=choix_ordre_pos, nb_pages=nb_pages)
+                           choix_ordre_pos=choix_ordre_pos)
 
 
 @app.route("/classement", methods=["POST"])
 def classement_actif():
     periode = int(request.form["periode"])
-    ascendant = int(request.form["asc"])
-    ascendant = bool(ascendant)
+    ascendant = bool(int(request.form["asc"]))
 
     data = trieur(periode, ascendant)
     data["periode"] = periode
     data["ascendant"] = ascendant
 
-    return render_template("pages/classement.html", data=data, choix_periode=choix_periode, choix_ordre_pos=choix_ordre_pos)
+    return render_template("pages/classement.html", data=data, choix_periode=choix_periode,
+                           choix_ordre_pos=choix_ordre_pos)
 
 
 @app.route("/articles_similaires", methods=["GET"])
@@ -99,11 +90,8 @@ def classement_similaire():
     reponse = couleur_positivite(reponse)
 
     # TODO Rediriger vers une page spécifique ??
-    return render_template("pages/classement.html", data=reponse, choix_periode=choix_periode, choix_ordre_pos=choix_ordre_pos)
-
-
-###############################################################"
-
+    return render_template("pages/classement.html", data=reponse, choix_periode=choix_periode,
+                           choix_ordre_pos=choix_ordre_pos)
 
 
 @app.route("/nuage")
@@ -138,8 +126,6 @@ def nuage_actif():
     return render_template("pages/nuage.html", data=data, choix_periode=choix_periode, code=code)
 
 
-
-
 @app.route("/statistiques")
 def stat():
     data = statistiques()
@@ -147,12 +133,6 @@ def stat():
     return render_template("pages/stat.html", data=data)
 
 
-@app.route("/about")
-def a_propos():
-    return render_template("pages/about.html")
-
-
-##########################
+########### Exécution ###########
 if __name__ == "__main__":
-    # app.run(debug=True) # Sans Docker
-    app.run(host="0.0.0.0", port=5000, debug=True) # Avec Docker
+    app.run(host="0.0.0.0", port=5000)

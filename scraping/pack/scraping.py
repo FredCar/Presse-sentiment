@@ -1,3 +1,4 @@
+# Pour que crontab trouve les packages
 import sys
 sys.path.insert(0, "/usr/local/lib/python3.7/site-packages")
 
@@ -12,14 +13,10 @@ class Scrapeur:
 
     def __init__(self, lien="https://news.google.com/topstories?hl=fr&gl=FR&ceid=FR%3Afr"):
         self.lien = lien
-        self.editeurs = ["le monde", "le figaro", "franceinfo", "20 minutes", "sud ouest",
-                         "le parisien", "lci", "boursorama", "actu orange"]
-        self.site_bloques = ["Ouest-France"]
+
 
     def scrap(self):
-        """
-        Fonction principale scrapant Google Actu
-        """
+        """Fonction principale scrapant Google Actu"""
         page_response = requests.get(self.lien)
         soupe = bs(page_response.content, "html.parser")
 

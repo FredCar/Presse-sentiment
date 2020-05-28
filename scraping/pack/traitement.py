@@ -2,23 +2,16 @@ import re
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from stop_words import get_stop_words
-import nltk
-import spacy # Lemmatiseur
+import spacy # Lemmatiseur et Stemmatiseur
 from textblob import Blobber
 from textblob_fr import PatternTagger, PatternAnalyzer
-
-
-# nltk.download("punkt") # A charger la prmière fois
-# nltk.download("wordnet") # A charger la prmière fois
 
 
 #==============================================
 # \\\\\\\\\\\\\\ ---Fonctions--- //////////////
 #==============================================
 def concatenation(sortie):
-    """
-    Concaténation du texte à traiter pour la matrice de termes
-    """
+    """Concaténation du texte à traiter pour la matrice de termes"""
     chaine = ""
     chaine += sortie["titre"] + " "
     if sortie["extrait"][:20] == sortie["texte"][:20]:
@@ -31,9 +24,7 @@ def concatenation(sortie):
 
 
 def nettoyage(x):
-    """
-    Fonction de nettoyage du texte
-    """
+    """Fonction de nettoyage du texte"""
     x = x.lower()
     x = re.sub(r"\W", " ", x)  # Enleve la ponctuation
     x = re.sub(r"[éèêë]", "e", x)
@@ -41,6 +32,7 @@ def nettoyage(x):
     x = re.sub(r"[ùûü]", "u", x)
     x = re.sub(r"[ôöò]", "o", x)
     x = re.sub(r"  +", " ", x)  # Enleve les espaces multiples
+   
     return x
 
 
@@ -61,30 +53,8 @@ class Traitement:
         self.blob = Blobber(pos_tagger=PatternTagger(), analyzer=PatternAnalyzer()) # Analyse de sentiments
 
 
-    def tokenisation(self, phrase):
-        """
-        Converti les phrases en liste de mots
-        """
-        return nltk.word_tokenize(phrase)
-
-
-    def stematisation(self,phrase):
-        """
-        Supprime les suffixes
-        """
-        mots = self.tokenisation(phrase)
-        stem = nltk.stem.snowball.FrenchStemmer()
-        liste_de_mots = []
-        for mot in mots:
-            liste_de_mots.append(stem.stem(mot))
-
-        return liste_de_mots
-
-
-    def lemmatisation(self, phrase):
-        """
-        Renvoi la racine des mots
-        """
+    def lemmatisation_stemmatisation(self, phrase):
+        """Renvoi la racine des mots et supprime les suffixes"""
         doc = self.nlp(phrase)
         sortie = []
         for token in doc:
@@ -95,25 +65,19 @@ class Traitement:
 
 
     def positivite(self, phrase):
-        """
-        Calcule la positivité de l'article
-        """
+        """Calcule la positivité de l'article"""
         bloby = self.blob(phrase)
         return bloby.sentiment[0]
 
 
     def subjectivite(self, phrase):
-        """
-        Calcule l'objectivité de l'article
-        """
+        """Calcule l'objectivité de l'article"""
         bloby = self.blob(phrase)
         return bloby.sentiment[1]
 
 
     def matrice(self, x):
-        """
-        Renvoi la liste des termes et leur nombre d'occurences trié par ordre decroissant
-        """
+        """Renvoi la liste des termes et leur nombre d'occurences trié par ordre decroissant"""
         cv = CountVectorizer(stop_words=self.french_stop_words)
         x_cv = cv.fit_transform(x)
 

@@ -18,9 +18,7 @@ import os
 #==============================================
 def connection():
     """ Connexion à la base de données  """
-    # client = MongoClient("localhost", 27017) # Sans Docker
     client = MongoClient('base_mongo', username="root", password="example") # Avec Docker
-    # client = MongoClient("base_mongo") # Test
     dbase = client["presse-sentiment"]
     collec = dbase["corpus"]
 
@@ -28,9 +26,7 @@ def connection():
 
 
 def read(filtre={}):
-    """
-    Récupère les données de la base et les mets en DataFrame
-    """
+    """ Récupère les données de la base et les mets en DataFrame """
     collec = connection()
 
     requete = collec.find(filtre)
@@ -38,24 +34,18 @@ def read(filtre={}):
     df = pd.DataFrame(list(requete))
 
     df.sort_values(by=["date"], axis=0, inplace=True)
-    # df = df.reset_index()
 
     return df
 
 
 def date_heure(x):
-    """
-    retourne la date et l'heure concaténés
-    """
+    """ retourne la date et l'heure concaténés """
     datetime = str(x["date"]) + "-" + str(x["heure"][:2])
     return datetime
 
 
 def hh(x):
-    """
-    Prends la date-heure-min-sec
-    retourne juste l'heure
-    """
+    """ Prends la date-heure-min-sec et retourne juste l'heure """
     liste = []
     for y in x:
         liste.append(str(y)[11:13])
@@ -63,7 +53,7 @@ def hh(x):
 
 
 def limiteur(periode=30):
-    """Pour filtrer par période"""
+    """ Pour filtrer par période """
     df = read()
 
     df = df[df["date"] != "--"]
@@ -73,36 +63,26 @@ def limiteur(periode=30):
     limit = time.time() - (sec_par_jour * periode)
     limit = datetime.datetime.fromtimestamp(limit)
 
-    # TODO Le probleme vient de la limite de temps imposée et du fait que le scrap ne fonctionne pas:
-    #  les articles sont trop anciens;
-    #  Solution provisoire: refaire un export plus récent;
-    #  solution définitive: automatiser le scraping
     limit = limit.strftime('%Y-%m-%d-%H')
-    # End TODO
 
     df["date-heure"] = df.apply(date_heure, axis=1)
     df["date-heure"] = pd.to_datetime(df["date-heure"])
 
-    # TODO Le problème ce concrétise ici: le DF retourné est vide
     df = df[df["date-heure"] > limit]
-    # End TODO
 
     return df
 
 
 def suppression():
-    """Pour vider le dossier d'images"""
+    """ Pour vider le dossier d'images """
     for f in glob.glob("/src/static/images/*"):
         os.remove(f)
 
 
 def graph_pos_jour(code=0):
-    """
-    Enregistre un graph de la positivite par jours
-    """
+    """ Enregistre un graph de la positivite par jours """
     df = read()
 
-    # df = df[df["positivite"] != 0]
     df = df[df["date"] != "--"]
 
     table = df.pivot_table(index=["date"], values="positivite")
@@ -114,9 +94,7 @@ def graph_pos_jour(code=0):
 
 
 def graph_pos_24_heure(code=0):
-    """
-    Enregistre ung raph de la positivite pour les dernières 24 heures
-    """
+    """ Enregistre ung raph de la positivite pour les dernières 24 heures """
     df = limiteur(periode=1)
 
     table = df.pivot_table(index=["date-heure"], values="positivite")
@@ -131,9 +109,7 @@ def graph_pos_24_heure(code=0):
 
 
 def ploteur(x,y, titre="", filename="graph"):
-    """
-    Crée et enregistre les graphs
-    """
+    """ Crée et enregistre les graphs """
     plt.figure(figsize=(18, 8))
     plt.plot(x, y, label="Courbe de positivite")
     plt.axhline(y=0, linestyle="--", c="red", label="Neutre")
@@ -147,6 +123,7 @@ def ploteur(x,y, titre="", filename="graph"):
 
 
 def couleur_positivite(data):
+    """ Crée des classes de positivité l'affichage des couleurs """
     for x in data:
         data[x]["positivite"] = round((data[x]["positivite"]*100))
         pos = data[x]["positivite"]
@@ -175,10 +152,9 @@ def couleur_positivite(data):
 
     return data
 
+
 def trieur(periode=30, ascendant=False):
-    """
-    Renvois les données du DataFrame en dico
-    """
+    """ Renvois les données du DataFrame en dico """
     df = limiteur(periode)
 
     df.sort_values(by=["positivite"], axis=0, inplace=True, ascending=ascendant)
@@ -189,6 +165,7 @@ def trieur(periode=30, ascendant=False):
 
 
 def texteur(x):
+    """ Recrée une chaine de texte à partir d'une matrice de termes """
     liste = []
     for y, z in x.items():
         for t in range(z):
@@ -200,6 +177,7 @@ def texteur(x):
 
 
 def stop_wordeur():
+    """ Crée une liste de mots à supprimer """
     french_stop_words = get_stop_words('french')
     ajout_stop_words = ["etre", "plus", "meme", "ca", "tre", "tres", "dont", "apre", "apres", "selon", "celui"]
     french_stop_words += ajout_stop_words
@@ -208,6 +186,7 @@ def stop_wordeur():
 
 
 def cloudeur(periode=1, positif=True, filename="cloud", code=0):
+    """ Crée un nuage de mots """
     french_stop_words = stop_wordeur()
 
     df = limiteur(periode)
@@ -231,6 +210,7 @@ def cloudeur(periode=1, positif=True, filename="cloud", code=0):
 
 
 def top(df, limit=20):
+    """ Renvois un dictionnaire des journaux, leurs nombres d'articles et la positivité moyenne """
     a = df.pivot_table(values="titre", index="auteur", aggfunc="count")
     b = df.pivot_table(values=["positivite"], index="auteur", aggfunc="mean")
     table_auteur = pd.concat([a, b], axis=1)
@@ -246,6 +226,7 @@ def top(df, limit=20):
 
 
 def statistiques():
+    """ Génère les données pour la page de stats """
     df = read()
 
     data = {}
@@ -258,6 +239,7 @@ def statistiques():
 
 # Similarité
 def similaires(text, corpus):
+    """ Renvois les articles similaires à celui choisi """
     french_stop_words = stop_wordeur()
 
     # Entrainement du modèle TF-IDF
@@ -265,7 +247,7 @@ def similaires(text, corpus):
     tf_phrases = tf_idf_chat.fit_transform(corpus)  # Matrice du corpus
 
     text = [text]
-    tf_text = tf_idf_chat.transform(text)  # Matrice de la question utilisateur
+    tf_text = tf_idf_chat.transform(text)  # Matrice de l'article demandé
     vals = cosine_similarity(tf_text, tf_phrases)  # Calcul de similarité
 
     ids = np.where(vals[0] > 0.25)  # ids des meilleurs scores
@@ -285,6 +267,7 @@ def similaires(text, corpus):
     if ids:
         reponses = ids
     else:
+        # TODO Afficher la réponse
         reponses.append("Désolé, je ne trouve pas d'articles similaires.")
 
     return reponses

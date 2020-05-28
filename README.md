@@ -1,4 +1,4 @@
-# Projet **Presse Sentiments**
+# Projet **Presse Sentiment**
 
 Projet réalisé dans le cadre de la formation [Développeur·se Data IA](https://simplon.co/formation/ecole-ia-microsoft/23).
 
@@ -11,8 +11,8 @@ Téléchargez le projet puis dézippez le.
 Ou bien clonez le :   
 ```git clone https://github.com/Simplon-IA-Biarritz-1/projet-final-devdataia-FredCar.git```  
 
-Éditez le fichier ```docker-compose.yml``` et changez tous les chemins avant les ```:```  
-```/chemin/vers/le/dossier/du/projet/database:/data```  
+Éditez le fichier ```docker-compose.yml``` et modifiez le chemin à la ligne ```21```       
+```/chemin/vers/le/dossier/du/projet-final-devdataia-FredCar-master```/database/:/docker-entrypoint-initdb.d/:ro  
 
 Depuis un terminal, rendez-vous dans le dossier du projet puis :  
 ```docker-compose up```

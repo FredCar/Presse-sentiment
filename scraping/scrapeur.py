@@ -13,10 +13,18 @@ import datetime
 
 debut = time.time()
 
+# Création du log de début de cycle
+now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
+now = now.strftime('%Y-%m-%d %H:%M:%S')
+log = str(now) + " ================================================= \n"
+
 # Instanciation des Classes
 scrap = Scrapeur()
 trait = Traitement()
 enreg = Enregistrement()
+
+# Ecriture du log dans un fichier
+enreg.logeur(log)
 
 tour = 0
 cpt = 1
@@ -30,7 +38,6 @@ while cpt > 0:
     # Traitement par articles
     cpt = 0
     total = 0
-
     for x in sortie.keys():
         total += 1
 
@@ -53,18 +60,15 @@ while cpt > 0:
         # Conversion en liste de phrases (format attendu pour la création de la matrice de termes)
         parts = chaine.split(". ")
 
-        # Nettoyage du texte
         liste_parts = []
         for part in parts:
-
             # Lemmatisation et Stemmatisation
-            part = trait.lemmatisation(part)
+            part = trait.lemmatisation_stemmatisation(part)
 
-            # Nettoyage
+            # Nettoyage du texte
             part = nettoyage(part)
 
             liste_parts.append(part)
-
 
         # Matrice de termes
         mat = trait.matrice(liste_parts)
@@ -72,29 +76,34 @@ while cpt > 0:
 
         sortie[x]["matrice"] = mat
 
-
         # Date d'enregistrement
         now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
         now = now.strftime('%Y-%m-%d-%H-%M-%S')
 
         sortie[x]["enregistre"] = now
 
-
         # Enregistrement
         cpt += 1
-        enreg.insert(sortie[x], method="one")
-
+        enreg.insert(sortie[x])
 
     temps = time.time() - debut
     debut = time.time()
     temps = time.strftime('%Hh, %Mm %Ss', time.gmtime(temps))
-    log += "Tour n° {} - Nb d'enregistrement : {}/{} articles, en : {} \n".format(tour, cpt, total, temps)
+    log = "Tour n° {} - Nb d'enregistrement : {}/{} articles, en : {} \n".format(tour, cpt, total, temps)
+    enreg.logeur(log)
 
-# TODO Modifier l'enregistrement des logs pour ne pas tout écrire à la fin de l'exécution
-# Enregistrement des logs dans un fichier
+# Création du log de fin de cycle
 now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
 now = now.strftime('%Y-%m-%d %H:%M:%S')
-now = str(now) + " ================================================= \n"
-log = str(now) + log
-with open("/src/scrap.log", "a") as logs: # TODO Voir si un chemin absolu est nécessaire
-    logs.write(log)
+log = "Fin" + " ==============================================" + str(now) + "\n"
+enreg.logeur(log)
+
+
+# # TODO Modifier l'enregistrement des logs pour ne pas tout écrire à la fin de l'exécution
+# # Enregistrement des logs dans un fichier
+# now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
+# now = now.strftime('%Y-%m-%d %H:%M:%S')
+# now = str(now) + " ================================================= \n"
+# log = str(now) + log
+# with open("/src/scrap.log", "a") as logs:
+#     logs.write(log)
