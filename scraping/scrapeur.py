@@ -7,6 +7,7 @@ sys.path.insert(0, "/src") # Avec Docker
 from pack.scraping import Scrapeur
 from pack.traitement import Traitement, concatenation, nettoyage
 from pack.enregistrement import Enregistrement
+from pack.spaceur import spaceur, read
 
 import time
 import datetime
@@ -19,12 +20,13 @@ now = now.strftime('%Y-%m-%d %H:%M:%S')
 log = str(now) + " ================================================= \n"
 
 # Instanciation des Classes
+enreg = Enregistrement()
+    # Ecriture du log dans un fichier
+enreg.logeur(log)
 scrap = Scrapeur()
 trait = Traitement()
-enreg = Enregistrement()
 
-# Ecriture du log dans un fichier
-enreg.logeur(log)
+
 
 tour = 0
 cpt = 1
@@ -84,7 +86,24 @@ while cpt > 0:
 
         # Enregistrement
         cpt += 1
-        enreg.insert(sortie[x])
+        enreg.insert(sortie[x]) # TODO est-il possible de récup l'id lors de la création ?
+
+        # Traitement des noms propres
+        doc = trait.extracteur_de_nom(chaine)
+
+        df = read({"titre": sortie[x]["titre"],
+                   "auteur": sortie[x]["auteur"]})
+        
+        # df = df.values # TODO A vérifier
+
+        nouveau, existant = spaceur(doc, df) 
+
+        now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
+        now = now.strftime('%Y-%m-%d %H:%M:%S')
+        log = "{} >> {} === New : {} === Old : {} \n".format(now, df["_id"].values[0], nouveau, existant)
+        enreg.logeur(log)
+
+
 
     temps = time.time() - debut
     debut = time.time()
@@ -97,13 +116,3 @@ now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
 now = now.strftime('%Y-%m-%d %H:%M:%S')
 log = "Fin" + " ==============================================" + str(now) + "\n"
 enreg.logeur(log)
-
-
-# # TODO Modifier l'enregistrement des logs pour ne pas tout écrire à la fin de l'exécution
-# # Enregistrement des logs dans un fichier
-# now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
-# now = now.strftime('%Y-%m-%d %H:%M:%S')
-# now = str(now) + " ================================================= \n"
-# log = str(now) + log
-# with open("/src/scrap.log", "a") as logs:
-#     logs.write(log)

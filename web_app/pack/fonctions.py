@@ -225,6 +225,14 @@ def top(df, limit=20):
     return top
 
 
+def moyenne_jour(df):
+    sortie = df.pivot_table(values="_id", index="date", aggfunc="count")[11:] # On supprime les premiers jours non représentatifs
+    sortie = sortie.mean().values[0]
+    sortie = round(sortie, 2)
+
+    return sortie
+
+
 def statistiques():
     """ Génère les données pour la page de stats """
     df = read()
@@ -233,6 +241,7 @@ def statistiques():
     data["total"] = df.shape[0]
     data["journaux"] = len(df["auteur"].unique())
     data["top20"] = top(df, 20)
+    data["moyenne_jour"] = moyenne_jour(df)
 
     return data
 

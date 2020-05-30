@@ -26,8 +26,8 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       # TODO A nettoyer
-      # - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/app_web:/src/app_web:ro
-      # - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/pack/:/src/pack/:ro
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/app_web:/src/app_web:ro
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/pack/:/src/pack/:ro
     networks:
       - presse_network
     ports:
@@ -39,6 +39,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       # TODO A nettoyer
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/scrap.log:/src/scrap.log
+      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/denommeur.log:/src/denommeur.log
       # - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/scrapeur.py:/src/scrapeur.py:ro
       # - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/pack/:/src/pack/:ro
     networks:

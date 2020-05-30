@@ -64,6 +64,12 @@ class Traitement:
         return sortie
 
 
+    def extracteur_de_nom(self, phrase):
+        doc = self.nlp(phrase)
+
+        return doc
+
+
     def positivite(self, phrase):
         """Calcule la positivité de l'article"""
         bloby = self.blob(phrase)
