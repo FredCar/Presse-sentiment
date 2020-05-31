@@ -16,7 +16,7 @@ services:
       - /etc/localtime:/etc/localtime:ro # TODO Vérifier si cela fonctionne sur d'autres OS qu'Ubuntu
       # Pour copier le fichier .json et le script d'initialisation de la base de données
       # >>>>> Modifiez la ligne 21 :
-      # >>>>> Remplacez : "/home/fred/Formation/Simplon/Exercisses/Projet_Mai2020"
+      # >>>>> Remplacez : "/home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final"
       # >>>>> Par le chemin absolu menant au dossier du projet
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/database/:/docker-entrypoint-initdb.d/:ro
       # <<<<< Modifier la ligne précédente <<<<<
@@ -25,9 +25,6 @@ services:
     build: web_app/.
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      # TODO A nettoyer
-      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/app_web:/src/app_web:ro
-      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/web_app/pack/:/src/pack/:ro
     networks:
       - presse_network
     ports:
@@ -37,11 +34,13 @@ services:
     build: scraping/.
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      # TODO A nettoyer
+      # Pour copier les logs dans un ficher local
+      # >>>>> Modifiez la ligne 41 :
+      # >>>>> Remplacez : "/home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final"
+      # >>>>> Par le chemin absolu menant au dossier du projet
       - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/scrap.log:/src/scrap.log
-      - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/denommeur.log:/src/denommeur.log
-      # - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/scrapeur.py:/src/scrapeur.py:ro
-      # - /home/fred/Formation/Simplon/Exercisses/Projet_Mai2020/Projet_final/scraping/pack/:/src/pack/:ro
+      # <<<<< Modifier la ligne précédente <<<<<
+
     networks:
       - presse_network
 

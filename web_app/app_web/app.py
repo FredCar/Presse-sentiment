@@ -126,6 +126,13 @@ def nuage_actif():
     return render_template("pages/nuage.html", data=data, choix_periode=choix_periode, code=code)
 
 
+@app.route('/nom_propre')
+def nom_propre():
+    data = explorateur_de_noms()
+
+    return render_template("pages/nom_propre.html", data=data)
+
+
 @app.route("/statistiques")
 def stat():
     data = statistiques()
@@ -135,4 +142,4 @@ def stat():
 
 ########### Exécution ###########
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True) # TODO Supprimer Debug mode
+    app.run(host="0.0.0.0", port=5000)

@@ -21,7 +21,7 @@ log = str(now) + " ================================================= \n"
 
 # Instanciation des Classes
 enreg = Enregistrement()
-    # Ecriture du log dans un fichier
+    # Ecriture du 1er log dans un fichier
 enreg.logeur(log)
 scrap = Scrapeur()
 trait = Traitement()
@@ -30,7 +30,7 @@ trait = Traitement()
 
 tour = 0
 cpt = 1
-log = ""
+# Tant qu'il trouve de nouveaux articles
 while cpt > 0:
     tour += 1
 
@@ -46,7 +46,6 @@ while cpt > 0:
         # Contrôle des doublons avant traitement
         requete = enreg.read({"titre": sortie[x]["titre"],
                               "auteur": sortie[x]["auteur"]})
-
         if len(list(requete)) > 0:
             continue
 
@@ -86,22 +85,22 @@ while cpt > 0:
 
         # Enregistrement
         cpt += 1
-        enreg.insert(sortie[x]) # TODO est-il possible de récup l'id lors de la création ?
-
+        enreg.insert(sortie[x]) 
+ 
         # Traitement des noms propres
         doc = trait.extracteur_de_nom(chaine)
 
-        df = read({"titre": sortie[x]["titre"],
-                   "auteur": sortie[x]["auteur"]})
+        filtre = {"titre": sortie[x]["titre"],
+                  "auteur": sortie[x]["auteur"]}
+        df = read(filtre, collec="corpus")
         
-        # df = df.values # TODO A vérifier
-
         nouveau, existant = spaceur(doc, df) 
 
-        now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
-        now = now.strftime('%Y-%m-%d %H:%M:%S')
-        log = "{} >> {} === New : {} === Old : {} \n".format(now, df["_id"].values[0], nouveau, existant)
-        enreg.logeur(log)
+        # # Décommenter pour afficher les logs de traitement des noms propres
+        # now = datetime.datetime.fromtimestamp(time.time())  # date actuelle
+        # now = now.strftime('%Y-%m-%d %H:%M:%S')
+        # log = "{} >> {} === New : {} === Old : {} \n".format(now, df["_id"].values[0], nouveau, existant)
+        # enreg.logeur(log)
 
 
 

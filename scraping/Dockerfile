@@ -12,8 +12,6 @@ RUN python3.7 -m spacy download fr_core_news_md
 # Pour les fichiers et scripts
 COPY pack/ /src/pack/
 COPY scrapeur.py /src/
-COPY denommeur.py /src/
-COPY denommeur.log /src/
 COPY scrap.log /src/
 
 # Pour automatiser l'exécution du scraping

@@ -54,7 +54,7 @@ class Traitement:
 
 
     def lemmatisation_stemmatisation(self, phrase):
-        """Renvoi la racine des mots et supprime les suffixes"""
+        """ Renvoi la racine des mots et supprime les suffixes """
         doc = self.nlp(phrase)
         sortie = []
         for token in doc:
@@ -65,25 +65,28 @@ class Traitement:
 
 
     def extracteur_de_nom(self, phrase):
+        """ Traite des phrases avec SpaCy pour en extraire entre autre les noms propres """
         doc = self.nlp(phrase)
 
         return doc
 
 
     def positivite(self, phrase):
-        """Calcule la positivité de l'article"""
+        """ Calcule la positivité de l'article """
         bloby = self.blob(phrase)
+
         return bloby.sentiment[0]
 
 
     def subjectivite(self, phrase):
-        """Calcule l'objectivité de l'article"""
+        """ Calcule l'objectivité de l'article """
         bloby = self.blob(phrase)
+
         return bloby.sentiment[1]
 
 
     def matrice(self, x):
-        """Renvoi la liste des termes et leur nombre d'occurences trié par ordre decroissant"""
+        """ Renvoi la liste des termes et leur nombre d'occurences trié par ordre decroissant """
         cv = CountVectorizer(stop_words=self.french_stop_words)
         x_cv = cv.fit_transform(x)
 

@@ -1,0 +1,40 @@
+{% extends "layouts/default.html" %}
+
+    {% block body %}
+
+        <h1>Noms Propres</h1>
+
+        <table class="table table-sm table-striped table-hover table-dark">
+            <tr>
+                <th class="text-success" scope="col">Nom</th>
+                <th class="text-success" scope="col">Nombre d'articles</th>
+                <th class="text-success" scope="col">Pourcentage des articles</th>
+                <th class="text-success" scope="col">Total occurences</th>
+                <th class="text-success" scope="col">Moyenne occurences</th>
+                <th class="text-success" scope="col">Moyenne positivité</th>
+            </tr>
+        {% for n in data %}
+            <tr>
+                <th class="text-success" scope="row">{{ n }}</th>
+                <th>{{ data[n]['nb_articles'] }}</th>
+                <th>{{ data[n]['pourcent_articles'] }} %</th>
+                <th>{{ data[n]['nb_occurence'] }}</th>
+                <th>{{ data[n]['moyenne_occurence'] }}</th>
+                <th>{{ data[n]['moyenne_positivite'] }}</th>
+                <!-- TODO Ajouter un lien versles articles concernés -->
+            </tr>
+        {% endfor %}
+        </table>
+
+        <!-- {% for n in data %}
+            <p>Le nom : <strong>'{{ data[n]['nom'] }}'</strong> est présant dans <strong>{{ data[n]['nb_articles'] }}</strong> articles, soit <strong>{{ data[n]['pourcent_articles'] }} %</strong> de tous les articles.</p>
+            <p>Il est cité <strong>{{ data[n]['nb_occurence'] }}</strong> fois, soit en moyenne <strong>{{ data[n]['moyenne_occurence'] }}</strong> fois dans les articles ou il apparait.</p>
+            <p>Les articles dans lesquels il apparait ont une note moyenne de positivité de <strong>{{ data[n]['moyenne_positivite'] }} %</strong></p>
+            <p>==========================================</p>
+
+        {% endfor %} -->
+
+    {% endblock %}
+
+
+    

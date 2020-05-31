@@ -16,11 +16,11 @@ import os
 #==============================================
 # \\\\\\\\\\\\\\ ---Fonctions--- //////////////
 #==============================================
-def connection():
+def connection(collec="corpus"):
     """ Connexion à la base de données  """
     client = MongoClient('base_mongo', username="root", password="example") # Avec Docker
     dbase = client["presse-sentiment"]
-    collec = dbase["corpus"]
+    collec = dbase[collec]
 
     return collec
 
@@ -28,11 +28,9 @@ def connection():
 def read(filtre={}):
     """ Récupère les données de la base et les mets en DataFrame """
     collec = connection()
-
     requete = collec.find(filtre)
 
     df = pd.DataFrame(list(requete))
-
     df.sort_values(by=["date"], axis=0, inplace=True)
 
     return df
@@ -41,6 +39,7 @@ def read(filtre={}):
 def date_heure(x):
     """ retourne la date et l'heure concaténés """
     datetime = str(x["date"]) + "-" + str(x["heure"][:2])
+    
     return datetime
 
 
@@ -49,25 +48,23 @@ def hh(x):
     liste = []
     for y in x:
         liste.append(str(y)[11:13])
+    
     return liste
 
 
 def limiteur(periode=30):
     """ Pour filtrer par période """
     df = read()
-
     df = df[df["date"] != "--"]
     df = df[df["heure"] != "--"]
 
     sec_par_jour = 60 * 60 * 24
     limit = time.time() - (sec_par_jour * periode)
     limit = datetime.datetime.fromtimestamp(limit)
-
     limit = limit.strftime('%Y-%m-%d-%H')
 
     df["date-heure"] = df.apply(date_heure, axis=1)
     df["date-heure"] = pd.to_datetime(df["date-heure"])
-
     df = df[df["date-heure"] > limit]
 
     return df
@@ -82,9 +79,7 @@ def suppression():
 def graph_pos_jour(code=0):
     """ Enregistre un graph de la positivite par jours """
     df = read()
-
     df = df[df["date"] != "--"]
-
     table = df.pivot_table(index=["date"], values="positivite")
 
     titre = "Positivité moyenne des articles de presse par jours"
@@ -96,10 +91,8 @@ def graph_pos_jour(code=0):
 def graph_pos_24_heure(code=0):
     """ Enregistre ung raph de la positivite pour les dernières 24 heures """
     df = limiteur(periode=1)
-
     table = df.pivot_table(index=["date-heure"], values="positivite")
     table = table[1:]
-
     a = table.index.values
     table["hh"] = hh(a)
 
@@ -156,7 +149,6 @@ def couleur_positivite(data):
 def trieur(periode=30, ascendant=False):
     """ Renvois les données du DataFrame en dico """
     df = limiteur(periode)
-
     df.sort_values(by=["positivite"], axis=0, inplace=True, ascending=ascendant)
     data = df.T.to_dict()
     data = couleur_positivite(data)
@@ -219,18 +211,27 @@ def top(df, limit=20):
     table_auteur = table_auteur.reset_index()
 
     table_auteur["positivite"] = round(table_auteur["positivite"] * 100, 2)
-
     top = table_auteur.T.to_dict()
 
     return top
 
 
 def moyenne_jour(df):
+    """ Renvois le nombre moyen d'articles par jour """
     sortie = df.pivot_table(values="_id", index="date", aggfunc="count")[11:] # On supprime les premiers jours non représentatifs
     sortie = sortie.mean().values[0]
     sortie = round(sortie, 2)
 
     return sortie
+
+
+def nb_nom_propre():
+    """ Renvois le nombre de noms propres enregistré dans la base """
+    collec_nom = connection("nom_propre")
+    res = collec_nom.find()
+    nb = len(list(res))
+
+    return nb
 
 
 def statistiques():
@@ -242,11 +243,11 @@ def statistiques():
     data["journaux"] = len(df["auteur"].unique())
     data["top20"] = top(df, 20)
     data["moyenne_jour"] = moyenne_jour(df)
+    data["nb_nom_propre"] = nb_nom_propre()
 
     return data
 
 
-# Similarité
 def similaires(text, corpus):
     """ Renvois les articles similaires à celui choisi """
     french_stop_words = stop_wordeur()
@@ -276,7 +277,43 @@ def similaires(text, corpus):
     if ids:
         reponses = ids
     else:
-        # TODO Afficher la réponse
+        # TODO Afficher l'absence de réponse
         reponses.append("Désolé, je ne trouve pas d'articles similaires.")
 
     return reponses
+
+
+def explorateur_de_noms():
+    """ Retourne les données sur les noms propres """
+    collec = connection()
+    total_articles = len(list(collec.find()))
+
+    collec_nom = connection("nom_propre")
+    res = collec_nom.find()
+
+    data = {}
+    n = 0
+    for r in res:
+        data[n] = {}
+        data[n]["nom"] = r["nom"]
+        
+        data[n]['nb_articles'] = len(r["articles"])
+        data[n]["pourcent_articles"] = round((data[n]['nb_articles'] * 100) / total_articles, 2)
+        
+        data[n]['somme_positivite'] = 0.0
+        data[n]['nb_occurence'] = 0
+        for m in r["articles"]:
+            data[n]['somme_positivite'] += m["poistivite"]
+            data[n]['nb_occurence'] += m["nb_occurence"]
+        data[n]['moyenne_occurence'] = round(data[n]['nb_occurence'] / data[n]['nb_articles'], 2)
+        data[n]['moyenne_positivite'] = round(data[n]['somme_positivite'] / data[n]['nb_articles'], 2)    
+      
+        n += 1
+    
+    df = pd.DataFrame(data).T   
+    df = df.set_index("nom")
+    df = df.sort_values(by="nb_articles", ascending=False)
+    df = df.head(50)
+    data = df.T.to_dict()
+
+    return data
