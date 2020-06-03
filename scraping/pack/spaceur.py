@@ -26,7 +26,6 @@ def read(filtre={}, collec="corpus"):
     return df
 
 
-# TODO Régler le problème d'encodage
 def spaceur(doc, df):
     """ Prend un article en entrée, le traite avec SpaCy,
     et enregistre les noms propres dans une base de données Mongodb """    

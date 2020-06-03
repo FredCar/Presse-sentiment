@@ -2,7 +2,7 @@
 
 # Pour pouvoir importer mes propres packages, même depuis un dossier parent
 import sys
-sys.path.insert(0, "/src") # Avec Docker
+sys.path.insert(0, "/src")
 
 from pack.scraping import Scrapeur
 from pack.traitement import Traitement, concatenation, nettoyage

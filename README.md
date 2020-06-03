@@ -11,7 +11,7 @@ Téléchargez le projet puis dézippez le.
 Ou bien clonez le :   
 ```git clone https://github.com/Simplon-IA-Biarritz-1/projet-final-devdataia-FredCar.git```  
 
-Éditez le fichier ```docker-compose.yml``` et modifiez le chemin à la ligne ```21```       
+Éditez le fichier ```docker-compose.yml``` et modifiez le chemin aux lignes ```21 et 41```       
 ```/chemin/vers/le/dossier/du/projet-final-devdataia-FredCar-master```/database/:/docker-entrypoint-initdb.d/:ro  
 
 Depuis un terminal, rendez-vous dans le dossier du projet puis :  
